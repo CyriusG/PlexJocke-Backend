@@ -1,6 +1,7 @@
 from django.db import models
 
-# Create your models here.
+
+# Model for movie request.
 class Request(models.Model):
     title = models.CharField(max_length=500)
     overview = models.TextField()
