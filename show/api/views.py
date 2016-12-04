@@ -34,7 +34,7 @@ class ShowCreateAPIView(APIView):
             if serializer.is_valid():
                 serializer.save(sonarr_id = sonarr.reply['id'])
 
-                sonarr.search_for_seaons(sonarr.reply['id'], request.data['seasons'])
+                sonarr.search_for_seasons(sonarr.reply['id'], request.data['seasons'])
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:

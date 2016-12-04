@@ -45,6 +45,8 @@ class Sonarr():
             return 'JSON API failure'
 
     def addshow(self, title, poster, tvdb_id, path, quality):
+        print(title)
+        print(path)
         data = {
             "title": title,
             "images": [
@@ -59,7 +61,7 @@ class Sonarr():
                     "monitored": False
                 }
             ],
-            "path": path,
+            "path": path + title,
             "qualityProfileId": quality,
             "seasonFolder": True,
             "monitored": False,
@@ -73,10 +75,11 @@ class Sonarr():
             request_json = json.loads(request)
 
             try:
+                print(request_json)
                 if request_json['title'] == title:
                     self.reply = request_json
 
-                    time.sleep(5)
+                    time.sleep(1)
 
                     update_show_json = json.loads(self.__apicall(self.__host, self.__port, 'get', self.__api_key, 'series/' + str(request_json['id']), {}))
                     update_show_json['monitored'] = True
@@ -96,7 +99,7 @@ class Sonarr():
         except json.JSONDecodeError:
             return False
 
-    def search_for_seaons(self, sonarr_id, seasons):
+    def search_for_seasons(self, sonarr_id, seasons):
 
         for season in seasons.split(','):
             if season == '-1':
