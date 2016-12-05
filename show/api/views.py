@@ -40,7 +40,7 @@ class ShowCreateAPIView(APIView):
             else:
                 return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
         else:
-            return Response(sonarr.reply, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
 
 class ShowDeleteAPIView(APIView):
 

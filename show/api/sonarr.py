@@ -45,8 +45,6 @@ class Sonarr():
             return 'JSON API failure'
 
     def addshow(self, title, poster, tvdb_id, path, quality):
-        print(title)
-        print(path)
         data = {
             "title": title,
             "images": [
@@ -75,8 +73,7 @@ class Sonarr():
             request_json = json.loads(request)
 
             try:
-                print(request_json)
-                if request_json['title'] == title:
+                try:
                     self.reply = request_json
 
                     time.sleep(1)
@@ -87,7 +84,7 @@ class Sonarr():
                     self.__apicall(self.__host, self.__port, 'put', self.__api_key, 'series', update_show_json)
 
                     return True
-                else:
+                except TypeError:
                     self.reply = {
                         'message': 'Show already requested.'
                     }
