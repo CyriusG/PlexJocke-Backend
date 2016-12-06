@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'movie',
     'request',
     'show',
+    'login',
 
     # Third party
     'corsheaders',
@@ -135,16 +136,24 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static', 'our_static'),
 )
 
+# Authentication
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_DOMAIN="localhost"
+
+# Plex settings
+PLEX_OWNER = ''
+PLEX_OWNER_TOKEN= ''
+
 # Couchpotato settings
 COUCHPOTATO_HOST = '127.0.0.1'
 COUCHPOTATO_PORT = '5050'
-COUCHPOTATO_API_KEY = 'f6dc045d24e24581ab5b92f574f6213a'
+COUCHPOTATO_API_KEY = ''
 
 # Sonarr settings
 SONARR_HOST = '127.0.0.1'
 SONARR_PORT = '8989'
-SONARR_API_KEY = 'ea7ea13c97db42de9c2a18df4a3d958d'
-SONARR_PATH = '/Users/joacimeriksson/sonarr/'
+SONARR_API_KEY = ''
+SONARR_PATH = ''
 SONARR_QUALITY = 1
 
 # CORS Settings

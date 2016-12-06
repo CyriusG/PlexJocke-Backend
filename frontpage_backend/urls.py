@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^movie/', include('movie.api.urls', namespace="movie-api")),
     url(r'^show/', include('show.api.urls', namespace="show-api")),
+    url(r'^authentication/', include('login.urls', namespace="login")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
