@@ -2,3 +2,5 @@ db.sqlite3
 .idea
 *.pyc
 */migrations
+.DS_Store
+settings.py

@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '#e!xliikbaxc^&o!a8-@z9d(2p74x@kobt07o4y3z++$1&*1o5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -65,7 +65,7 @@ ROOT_URLCONF = 'frontpage_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # This makes it OS independent
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -138,11 +138,11 @@ STATICFILES_DIRS = (
 
 # Authentication
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_DOMAIN="localhost"
+SESSION_COOKIE_DOMAIN = "localhost"
 
 # Plex settings
 PLEX_OWNER = ''
-PLEX_OWNER_TOKEN= ''
+PLEX_OWNER_TOKEN = ''
 
 # Couchpotato settings
 COUCHPOTATO_HOST = '127.0.0.1'

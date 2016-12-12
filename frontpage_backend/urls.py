@@ -16,12 +16,15 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from login.views import login, logout, authentication
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^movie/', include('movie.api.urls', namespace="movie-api")),
     url(r'^show/', include('show.api.urls', namespace="show-api")),
-    url(r'^authentication/', include('login.urls', namespace="login")),
+    url(r'^auth/', authentication),
+    url(r'^login/', login),
+    url(r'^logout/', logout),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
