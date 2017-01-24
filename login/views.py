@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 
 # Helper functions
-from .functions import getToken, testToken, check_friend
+from .functions import getInformation, testToken, check_friend
 
 # The main view nginx uses to authenticate
 def authentication(request):
@@ -48,10 +48,10 @@ def login(request):
             password = request.POST['password']
 
             # Get the authenticati token of that user
-            token = getToken(username, password)
+            information = getInformation(username, password)
 
             # If there's a valid token and the user is on the friends list try to authencate the user
-            if token and check_friend(username):
+            if information[0] and check_friend(username):
                 try:
                     # If the user checked the remember me checkbox the session shouldn't expire when the browser closes
                     remember_me = request.POST['rememberMe']
@@ -61,7 +61,9 @@ def login(request):
                     settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
                 # Set the session variable to the authentication token
-                request.session['plexjocke_token'] = token
+                request.session['plexjocke_token'] = information[0]
+                request.session['plexjocke_username'] = username
+                request.session['plexjocke_email'] = information[1]
 
                 return HttpResponseRedirect('http://' + redirect_url)
             else:
@@ -90,11 +92,13 @@ def logout(request):
     # Try to remove the session
     try:
         del request.session['plexjocke_token']
+        del request.session['plexjocke_username']
+        del request.session['plexjocke_email']
     except KeyError:
         pass
 
     # Return the suer to the previous page.
-    return HttpResponseRedirect('http://' + redirect_url)
+    return HttpResponseRedirect('https://' + redirect_url)
 
 
 # Test page

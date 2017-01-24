@@ -6,6 +6,8 @@ from movie.models import Request
 class MovieCreateSerializer(ModelSerializer):
 
     cp_id = HiddenField(default='')
+    user = HiddenField(default='')
+    user_email = HiddenField(default='')
 
     class Meta:
         model = Request

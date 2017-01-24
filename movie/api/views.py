@@ -24,7 +24,12 @@ class MovieCreateAPIView(APIView):
         couchpotato = Couchpotato(settings.COUCHPOTATO_HOST, settings.COUCHPOTATO_PORT, settings.COUCHPOTATO_API_KEY)
 
         if couchpotato.addmovie(request.data['imdb_id']):
-            serializer = MovieCreateSerializer(data=request.data)
+            session = SessionStore(session_key=request.data['sessionid'])
+
+            data request.data
+            del data[-1]
+
+            serializer = MovieCreateSerializer(data=data)
 
             if serializer.is_valid():
                 serializer.save(cp_id = couchpotato.reply['movie']['_id'])

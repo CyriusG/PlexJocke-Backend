@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 
 # Takes a username and password and returns the Plex token or nothing if the credentials were incorrect.
-def getToken(username, password):
+def getInformation(username, password):
     buffer = BytesIO()
     c = pycurl.Curl()
 
@@ -40,7 +40,8 @@ def getToken(username, password):
 
     # Try and retrieve the authToken and return it, if it fails return None.
     try:
-        return body['user']['authToken']
+        information = [body['user']['authToken'], body['user']['email']]
+        return information
     except KeyError:
         return None
 

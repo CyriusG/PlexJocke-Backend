@@ -1,3 +1,6 @@
+import pycurl
+from io import BytesIO
+
 from django.conf import settings
 
 from rest_framework.generics import (
@@ -29,10 +32,16 @@ class ShowCreateAPIView(APIView):
                 request.data['tvdb_id'],
                 settings.SONARR_PATH,
                 settings.SONARR_QUALITY):
+
+            session = SessionStore(session_key=request.data['sessionid'])
+
+            data = request.data
+            del data[-1]
+
             serializer = ShowCreateSerializer(data=request.data)
 
             if serializer.is_valid():
-                serializer.save(sonarr_id = sonarr.reply['id'])
+                serializer.save(sonarr_id = sonarr.reply['id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
 
                 sonarr.search_for_seasons(sonarr.reply['id'], request.data['seasons'])
 

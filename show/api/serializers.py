@@ -6,6 +6,8 @@ from show.models import Request
 class ShowCreateSerializer(ModelSerializer):
 
     sonarr_id = HiddenField(default='')
+    user = HiddenField(default='')
+    user_email = HiddenField(default='')
 
     class Meta:
         model = Request
