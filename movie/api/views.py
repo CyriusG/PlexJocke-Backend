@@ -28,7 +28,7 @@ class MovieCreateAPIView(APIView):
             session = SessionStore(session_key=request.data['sessionid'])
 
             data = request.data
-            del data[-1]
+            del data['sessionid']
 
             serializer = MovieCreateSerializer(data=data)
 
