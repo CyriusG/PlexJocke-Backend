@@ -26,13 +26,13 @@ class MovieCreateAPIView(APIView):
         if couchpotato.addmovie(request.data['imdb_id']):
             session = SessionStore(session_key=request.data['sessionid'])
 
-            data request.data
+            data = request.data
             del data[-1]
 
             serializer = MovieCreateSerializer(data=data)
 
             if serializer.is_valid():
-                serializer.save(cp_id = couchpotato.reply['movie']['_id'])
+                serializer.save(cp_id = couchpotato.reply['movie']['_id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response({'message': 'Movie has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
