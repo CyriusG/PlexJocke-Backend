@@ -26,13 +26,7 @@ class ShowCreateAPIView(APIView):
 
         sonarr = Sonarr(settings.SONARR_HOST, settings.SONARR_PORT, settings.SONARR_API_KEY)
 
-        if sonarr.addshow(
-                request.data['title'],
-                request.data['poster'],
-                request.data['tvdb_id'],
-                settings.SONARR_PATH,
-                settings.SONARR_QUALITY):
-
+        if sonarr.addshow(request.data['title'], request.data['poster'], request.data['tvdb_id'], settings.SONARR_PATH, settings.SONARR_QUALITY):
             session = SessionStore(session_key=request.data['sessionid'])
 
             data = request.data
