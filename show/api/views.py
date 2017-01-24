@@ -2,6 +2,7 @@ import pycurl
 from io import BytesIO
 
 from django.conf import settings
+from django.contrib.sessions.backends.db import SessionStore
 
 from rest_framework.generics import (
     ListAPIView,
@@ -44,6 +45,7 @@ class ShowCreateAPIView(APIView):
                 return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
         else:
             return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
+
 
 class ShowDeleteAPIView(APIView):
 

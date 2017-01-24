@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.sessions.backends.db import SessionStore
 
 from rest_framework.generics import (
     ListAPIView,
