@@ -30,11 +30,8 @@ class MovieCreateAPIView(APIView):
             # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
-            print(session)
-
-            token = session['plexjocke_token']
-
-            if token:
+            try:
+                user = session['plexjocke_username']
                 # If adding a request for a movie succeeds.
                 if couchpotato.addmovie(request.data['imdb_id']):
 
@@ -54,7 +51,7 @@ class MovieCreateAPIView(APIView):
                         return Response({'message': 'Movie has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
                 else:
                     return Response(couchpotato.reply, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-            else:
+            except KeyError:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         except MultiValueDictKeyError:
@@ -73,9 +70,9 @@ class MovieDeleteAPIView(APIView):
             # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
-            token = session['plexjocke_token']
+            try:
+                token = session['plexjocke_token']
 
-            if token:
                 try:
                     # Fetch the movie to delete using the primary key specified.
                     movie = Request.objects.get(pk=pk)
@@ -90,7 +87,7 @@ class MovieDeleteAPIView(APIView):
                         return Response(couchpotato.reply, status=status.HTTP_400_BAD_REQUEST)
                 except Request.DoesNotExist:
                     return Response(status=status.HTTP_404_NOT_FOUND)
-            else:
+            except KeyError:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         except MultiValueDictKeyError:
