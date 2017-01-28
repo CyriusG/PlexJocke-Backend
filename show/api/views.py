@@ -27,24 +27,36 @@ class ShowCreateAPIView(APIView):
 
         sonarr = Sonarr(settings.SONARR_HOST, settings.SONARR_PORT, settings.SONARR_API_KEY)
 
-        if sonarr.addshow(request.data['title'], request.data['poster'], request.data['tvdb_id'], settings.SONARR_PATH, settings.SONARR_QUALITY):
+        try:
+            # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
-            data = request.data
-            del data[-1]
+            token = session['plexjocke_token']
 
-            serializer = ShowCreateSerializer(data=request.data)
+            if token:
+                if sonarr.addshow(request.data['title'], request.data['poster'], request.data['tvdb_id'], settings.SONARR_PATH, settings.SONARR_QUALITY):
+                    session = SessionStore(session_key=request.data['sessionid'])
 
-            if serializer.is_valid():
-                serializer.save(sonarr_id = sonarr.reply['id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
+                    data = request.data
+                    del data['sessionid']
 
-                sonarr.search_for_seasons(sonarr.reply['id'], request.data['seasons'])
+                    serializer = ShowCreateSerializer(data=request.data)
 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    if serializer.is_valid():
+                        serializer.save(sonarr_id = sonarr.reply['id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
+
+                        sonarr.search_for_seasons(sonarr.reply['id'], request.data['seasons'])
+
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    else:
+                        return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
+                else:
+                    return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
             else:
-                return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
-        else:
-            return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        except MultiValueDictKeyError:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class ShowDeleteAPIView(APIView):
@@ -54,16 +66,28 @@ class ShowDeleteAPIView(APIView):
         sonarr = Sonarr(settings.SONARR_HOST, settings.SONARR_PORT, settings.SONARR_API_KEY)
 
         try:
-            show = Request.objects.get(pk=pk)
+            # Get the session of the current user.
+            session = SessionStore(session_key=request.data['sessionid'])
 
-            if sonarr.delete_show(show.sonarr_id):
-                show.delete()
+            token = session['plexjocke_token']
 
-                return Response(sonarr.reply, status=status.HTTP_204_NO_CONTENT)
+            if token:
+                try:
+                    show = Request.objects.get(pk=pk)
+
+                    if sonarr.delete_show(show.sonarr_id):
+                        show.delete()
+
+                        return Response(sonarr.reply, status=status.HTTP_204_NO_CONTENT)
+                    else:
+                        return Response(sonarr.reply, status=status.HTTP_400_BAD_REQUEST)
+                except Request.DoesNotExist:
+                    return Response(status=status.HTTP_404_NOT_FOUND)
             else:
-                return Response(sonarr.reply, status=status.HTTP_400_BAD_REQUEST)
-        except Request.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        except MultiValueDictKeyError:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 class ShowDetailAPIView(RetrieveAPIView):
     queryset = Request.objects.all()

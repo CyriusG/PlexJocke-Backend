@@ -5,6 +5,7 @@ from movie.models import Request
 
 class MovieCreateSerializer(ModelSerializer):
 
+    # THese fields are retrieved by the backend.
     cp_id = HiddenField(default='')
     user = HiddenField(default='')
     user_email = HiddenField(default='')

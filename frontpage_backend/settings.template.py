@@ -110,6 +110,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# REST Framework configuration settings.
+REST_FRAMEWORK = {
+    # Disable the browsable api.
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -157,4 +164,8 @@ SONARR_PATH = ''
 SONARR_QUALITY = 1
 
 # CORS Settings
-CORS_ORIGIN_ALLOW_ALL = True
+ORS_ORIGIN_ALLOW_ALL = False
+# Change this to whatever domain the cross origin requests originate from.
+CORS_ORIGIN_WHITELIST = (
+    'localhost'
+)

@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.sessions.backends.db import SessionStore
+from django.utils.datastructures import MultiValueDictKeyError
 
 from rest_framework.generics import (
     ListAPIView,
@@ -22,23 +23,40 @@ class MovieCreateAPIView(APIView):
 
     def post(self, request, format=None):
 
+        # Create a new Couchpotato object with the settings specified in settings.py
         couchpotato = Couchpotato(settings.COUCHPOTATO_HOST, settings.COUCHPOTATO_PORT, settings.COUCHPOTATO_API_KEY)
 
-        if couchpotato.addmovie(request.data['imdb_id']):
+        try:
+            # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
-            data = request.data
-            del data['sessionid']
+            token = session['plexjocke_token']
 
-            serializer = MovieCreateSerializer(data=data)
+            if token:
+                # If adding a request for a movie succeeds.
+                if couchpotato.addmovie(request.data['imdb_id']):
 
-            if serializer.is_valid():
-                serializer.save(cp_id = couchpotato.reply['movie']['_id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    # Remove the sessionid from the post data.
+                    data = request.data
+                    del data['sessionid']
+
+                    # Create a new MovieCreateSerializer using the data that was posted.
+                    serializer = MovieCreateSerializer(data=data)
+
+                    # If the serializer is valid, save the request to the database and return HTTP status 201.
+                    if serializer.is_valid():
+                        serializer.save(cp_id = couchpotato.reply['movie']['_id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    # If the serializer failed return an error.
+                    else:
+                        return Response({'message': 'Movie has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
+                else:
+                    return Response(couchpotato.reply, status=status.HTTP_503_SERVICE_UNAVAILABLE)
             else:
-                return Response({'message': 'Movie has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
-        else:
-            return Response(couchpotato.reply, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        except MultiValueDictKeyError:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 
@@ -46,19 +64,35 @@ class MovieDeleteAPIView(APIView):
 
     def delete(self, request, pk, format=None):
 
+        # Create a new Couchpotato object with the settings specified in settings.py
         couchpotato = Couchpotato(settings.COUCHPOTATO_HOST, settings.COUCHPOTATO_PORT, settings.COUCHPOTATO_API_KEY)
 
         try:
-            movie = Request.objects.get(pk=pk)
+            # Get the session of the current user.
+            session = SessionStore(session_key=request.data['sessionid'])
 
-            if couchpotato.deletemovie(movie.cp_id):
-                movie.delete()
+            token = session['plexjocke_token']
 
-                return Response(couchpotato.reply, status=status.HTTP_204_NO_CONTENT)
+            if token:
+                try:
+                    # Fetch the movie to delete using the primary key specified.
+                    movie = Request.objects.get(pk=pk)
+
+                    # If Couchpotato successfully removed the movie.
+                    if couchpotato.deletemovie(movie.cp_id):
+                        # Delete the movie from the request database.
+                        movie.delete()
+
+                        return Response(couchpotato.reply, status=status.HTTP_204_NO_CONTENT)
+                    else:
+                        return Response(couchpotato.reply, status=status.HTTP_400_BAD_REQUEST)
+                except Request.DoesNotExist:
+                    return Response(status=status.HTTP_404_NOT_FOUND)
             else:
-                return Response(couchpotato.reply, status=status.HTTP_400_BAD_REQUEST)
-        except Request.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        except MultiValueDictKeyError:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class MovieDetailAPIView(RetrieveAPIView):
