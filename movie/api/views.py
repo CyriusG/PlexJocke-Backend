@@ -30,6 +30,8 @@ class MovieCreateAPIView(APIView):
             # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
+            print(session)
+
             token = session['plexjocke_token']
 
             if token:
