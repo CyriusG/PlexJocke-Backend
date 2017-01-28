@@ -3,6 +3,7 @@ from io import BytesIO
 
 from django.conf import settings
 from django.contrib.sessions.backends.db import SessionStore
+from django.utils.datastructures import MultiValueDictKeyError
 
 from rest_framework.generics import (
     ListAPIView,

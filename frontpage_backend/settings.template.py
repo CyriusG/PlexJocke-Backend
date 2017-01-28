@@ -146,6 +146,7 @@ STATICFILES_DIRS = (
 # Authentication
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_DOMAIN = "localhost"
+SESSION_COOKIE_HTTPONLY = False
 
 # Plex settings
 PLEX_OWNER = ''
@@ -164,7 +165,7 @@ SONARR_PATH = ''
 SONARR_QUALITY = 1
 
 # CORS Settings
-ORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = False
 # Change this to whatever domain the cross origin requests originate from.
 CORS_ORIGIN_WHITELIST = (
     'localhost'
