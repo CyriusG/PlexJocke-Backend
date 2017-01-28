@@ -32,9 +32,9 @@ class ShowCreateAPIView(APIView):
             # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
-            token = session['plexjocke_token']
+            try:
+                user = session['plexjocke_username']
 
-            if token:
                 if sonarr.addshow(request.data['title'], request.data['poster'], request.data['tvdb_id'], settings.SONARR_PATH, settings.SONARR_QUALITY):
                     session = SessionStore(session_key=request.data['sessionid'])
 
@@ -53,7 +53,7 @@ class ShowCreateAPIView(APIView):
                         return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
                 else:
                     return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
-            else:
+            except KeyError:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         except MultiValueDictKeyError:
@@ -70,9 +70,9 @@ class ShowDeleteAPIView(APIView):
             # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
-            token = session['plexjocke_token']
+            try:
+                user = session['plexjocke_username']
 
-            if token:
                 try:
                     show = Request.objects.get(pk=pk)
 
@@ -84,7 +84,7 @@ class ShowDeleteAPIView(APIView):
                         return Response(sonarr.reply, status=status.HTTP_400_BAD_REQUEST)
                 except Request.DoesNotExist:
                     return Response(status=status.HTTP_404_NOT_FOUND)
-            else:
+            except KeyError:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         except MultiValueDictKeyError:
