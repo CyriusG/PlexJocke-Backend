@@ -67,31 +67,19 @@ class MovieDeleteAPIView(APIView):
         couchpotato = Couchpotato(settings.COUCHPOTATO_HOST, settings.COUCHPOTATO_PORT, settings.COUCHPOTATO_API_KEY)
 
         try:
-            # Get the session of the current user.
-            session = SessionStore(session_key=request.data['sessionid'])
+            # Fetch the movie to delete using the primary key specified.
+            movie = Request.objects.get(pk=pk)
 
-            try:
-                token = session['plexjocke_token']
+            # If Couchpotato successfully removed the movie.
+            if couchpotato.deletemovie(movie.cp_id):
+                # Delete the movie from the request database.
+                movie.delete()
 
-                try:
-                    # Fetch the movie to delete using the primary key specified.
-                    movie = Request.objects.get(pk=pk)
-
-                    # If Couchpotato successfully removed the movie.
-                    if couchpotato.deletemovie(movie.cp_id):
-                        # Delete the movie from the request database.
-                        movie.delete()
-
-                        return Response(couchpotato.reply, status=status.HTTP_204_NO_CONTENT)
-                    else:
-                        return Response(couchpotato.reply, status=status.HTTP_400_BAD_REQUEST)
-                except Request.DoesNotExist:
-                    return Response(status=status.HTTP_404_NOT_FOUND)
-            except KeyError:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        except MultiValueDictKeyError:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+                return Response(couchpotato.reply, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(couchpotato.reply, status=status.HTTP_400_BAD_REQUEST)
+        except Request.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class MovieDetailAPIView(RetrieveAPIView):

@@ -67,28 +67,16 @@ class ShowDeleteAPIView(APIView):
         sonarr = Sonarr(settings.SONARR_HOST, settings.SONARR_PORT, settings.SONARR_API_KEY)
 
         try:
-            # Get the session of the current user.
-            session = SessionStore(session_key=request.data['sessionid'])
+            show = Request.objects.get(pk=pk)
 
-            try:
-                user = session['plexjocke_username']
+            if sonarr.delete_show(show.sonarr_id):
+                show.delete()
 
-                try:
-                    show = Request.objects.get(pk=pk)
-
-                    if sonarr.delete_show(show.sonarr_id):
-                        show.delete()
-
-                        return Response(sonarr.reply, status=status.HTTP_204_NO_CONTENT)
-                    else:
-                        return Response(sonarr.reply, status=status.HTTP_400_BAD_REQUEST)
-                except Request.DoesNotExist:
-                    return Response(status=status.HTTP_404_NOT_FOUND)
-            except KeyError:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        except MultiValueDictKeyError:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+                return Response(sonarr.reply, status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(sonarr.reply, status=status.HTTP_400_BAD_REQUEST)
+        except Request.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 class ShowDetailAPIView(RetrieveAPIView):
     queryset = Request.objects.all()
