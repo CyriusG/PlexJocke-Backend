@@ -30,30 +30,30 @@ class MovieCreateAPIView(APIView):
             # Get the session of the current user.
             session = SessionStore(session_key=request.data['sessionid'])
 
-            token = session['plexjocke_token']
+            # token = session['plexjocke_token']
+            #
+            # if token:
+            # If adding a request for a movie succeeds.
+            if couchpotato.addmovie(request.data['imdb_id']):
 
-            if token:
-                # If adding a request for a movie succeeds.
-                if couchpotato.addmovie(request.data['imdb_id']):
+                # Remove the sessionid from the post data.
+                data = request.data
+                del data['sessionid']
 
-                    # Remove the sessionid from the post data.
-                    data = request.data
-                    del data['sessionid']
+                # Create a new MovieCreateSerializer using the data that was posted.
+                serializer = MovieCreateSerializer(data=data)
 
-                    # Create a new MovieCreateSerializer using the data that was posted.
-                    serializer = MovieCreateSerializer(data=data)
-
-                    # If the serializer is valid, save the request to the database and return HTTP status 201.
-                    if serializer.is_valid():
-                        serializer.save(cp_id = couchpotato.reply['movie']['_id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
-                        return Response(serializer.data, status=status.HTTP_201_CREATED)
-                    # If the serializer failed return an error.
-                    else:
-                        return Response({'message': 'Movie has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
+                # If the serializer is valid, save the request to the database and return HTTP status 201.
+                if serializer.is_valid():
+                    serializer.save(cp_id = couchpotato.reply['movie']['_id'], user = session['plexjocke_username'], user_email = session['plexjocke_email'])
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                # If the serializer failed return an error.
                 else:
-                    return Response(couchpotato.reply, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+                    return Response({'message': 'Movie has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
             else:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
+                return Response(couchpotato.reply, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            # else:
+            #     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         except MultiValueDictKeyError:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
