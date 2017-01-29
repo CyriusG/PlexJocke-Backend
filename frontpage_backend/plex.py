@@ -61,7 +61,7 @@ class Plex():
 
         year = date.split('-')[0]
 
-        for video in body.mediacontainer.findAll('video'):
+        for video in body.mediacontainer.findAll('directory'):
             if video['title'] == title and video['year'] == year and video['type'] == 'show':
                 match = True
 
