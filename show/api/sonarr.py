@@ -67,31 +67,27 @@ class Sonarr():
             "titleSlug": slugify(title),
         }
 
-        request = self.__apicall(self.__host, self.__port, "post", self.__api_key, 'series', data)
+        request = self.__apicall(self.__host, self.__port, 'post', self.__api_key, 'series', data)
 
         try:
             request_json = json.loads(request)
 
             try:
-                try:
-                    self.reply = request_json
-
-                    time.sleep(1)
-
-                    update_show_json = json.loads(self.__apicall(self.__host, self.__port, 'get', self.__api_key, 'series/' + str(request_json['id']), {}))
-                    update_show_json['monitored'] = True
-
-                    self.__apicall(self.__host, self.__port, 'put', self.__api_key, 'series', update_show_json)
-
-                    return True
-                except TypeError:
-                    self.reply = {
-                        'message': 'Show already requested.'
-                    }
-                    return False
-            except KeyError:
                 self.reply = request_json
+
+                time.sleep(1)
+
+                update_show_json = json.loads(self.__apicall(self.__host, self.__port, 'get', self.__api_key, 'series/' + str(request_json['id']), {}))
+                update_show_json['monitored'] = True
+
+                self.__apicall(self.__host, self.__port, 'put', self.__api_key, 'series', update_show_json)
+
                 return True
+            except TypeError:
+                self.reply = {
+                    'message': 'Show already requested.'
+                }
+                return False
 
         except json.JSONDecodeError:
             return False

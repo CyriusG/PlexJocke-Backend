@@ -151,6 +151,8 @@ SESSION_COOKIE_HTTPONLY = False
 # Plex settings
 PLEX_OWNER = ''
 PLEX_OWNER_TOKEN = ''
+PLEX_HOST = '127.0.0.1'
+PLEX_PORT = '32400'
 
 # Couchpotato settings
 COUCHPOTATO_HOST = '127.0.0.1'
