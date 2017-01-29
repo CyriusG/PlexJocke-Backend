@@ -32,7 +32,7 @@ class Couchpotato():
 
     def addmovie(self, imdb_id):
 
-        request = self.__apicall(self.__host, self.__port, self.__api_key, '/movie.add?identifier=' + imdb_id)
+        request = self.__apicall(self.__host, self.__port, self.__api_key, '/movie.add?identifier=' + imdb_id + '&force_readd=False')
 
         try:
             request_json = json.loads(request)
