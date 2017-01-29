@@ -39,11 +39,13 @@ class Plex():
         except json.JSONDecodeError:
             return 'JSON API failure'
 
-    def search_for_movie(self, title, year):
+    def search_for_movie(self, title, date):
         request = self.__apicall(self.__host, self.__port, '/search?query=' + title.replace(' ', '%20'))
 
         body = BeautifulSoup(request, 'html.parser')
         match = False
+
+        year = date.split('-')[0]
 
         for video in body.mediacontainer.findAll('video'):
             if video['title'] == title and video['year'] == year and video['type'] == 'movie':
@@ -51,11 +53,13 @@ class Plex():
 
         return match
 
-    def search_for_show(self, title, year):
+    def search_for_show(self, title, date):
         request = self.__apicall(self.__host, self.__port, '/search?query=' + title.replace(' ', '%20'))
 
         body = BeautifulSoup(request, 'html.parser')
         match = False
+
+        year = date.split('-')[0]
 
         for video in body.mediacontainer.findAll('video'):
             if video['title'] == title and video['year'] == year and video['type'] == 'show':
