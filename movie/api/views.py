@@ -36,7 +36,10 @@ class MovieCreateAPIView(APIView):
                 token = session['plexjocke_username']
 
                 if token:
-                    if not plex.search_for_movie(request.data['title'], request.data['release_date']):
+                    print(plex.search_for_movie(request.data['title'], request.data['release_date']))
+                    if plex.search_for_movie(request.data['title'], request.data['release_date']):
+                        return Response({'message': 'Movie is already on Plex.', 'success': False}, status=status.HTTP_409_CONFLICT)
+                    else:
                         # If adding a request for a movie succeeds.
                         if couchpotato.addmovie(request.data['imdb_id']):
 
@@ -56,8 +59,6 @@ class MovieCreateAPIView(APIView):
                                 return Response({'message': 'Movie has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
                         else:
                             return Response(couchpotato.reply, status=status.HTTP_503_SERVICE_UNAVAILABLE)
-                    else:
-                        return Response({'message': 'Movie is already on Plex.', 'success': False}, status=status.HTTP_409_CONFLICT)    
                 else:
                     return Response(status=status.HTTP_401_UNAUTHORIZED)
             except KeyError:
