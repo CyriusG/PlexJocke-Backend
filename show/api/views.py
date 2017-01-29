@@ -38,7 +38,7 @@ class ShowCreateAPIView(APIView):
                 token = session['plexjocke_token']
 
                 if token:
-                    if not plex.search_for_show(request.data['title'], request.data['release_date'])
+                    if not plex.search_for_show(request.data['title'], request.data['release_date']):
                         if sonarr.addshow(request.data['title'], request.data['poster'], request.data['tvdb_id'], settings.SONARR_PATH, settings.SONARR_QUALITY):
                             session = SessionStore(session_key=request.data['sessionid'])
 
