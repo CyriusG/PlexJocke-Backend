@@ -18,6 +18,7 @@ from show.models import Request
 from .serializers import ShowCreateSerializer, ShowListSerializer
 
 from .sonarr import Sonarr
+from frontpage_backend.plex import Plex
 
 
 class ShowCreateAPIView(APIView):
@@ -27,6 +28,7 @@ class ShowCreateAPIView(APIView):
     def post(self, request, format=None):
 
         sonarr = Sonarr(settings.SONARR_HOST, settings.SONARR_PORT, settings.SONARR_API_KEY)
+        plex = Plex(settings.PLEX_HOST, settings.PLEX_PORT)
 
         try:
             # Get the session of the current user.
@@ -36,7 +38,7 @@ class ShowCreateAPIView(APIView):
                 token = session['plexjocke_token']
 
                 if token:
-                    
+                    if not plex.search_for_show(request.data['title'], request.data['release_date'])
                         if sonarr.addshow(request.data['title'], request.data['poster'], request.data['tvdb_id'], settings.SONARR_PATH, settings.SONARR_QUALITY):
                             session = SessionStore(session_key=request.data['sessionid'])
 
@@ -55,6 +57,8 @@ class ShowCreateAPIView(APIView):
                                 return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
                         else:
                             return Response({'message': 'Show has already been requested.', 'success': False}, status=status.HTTP_409_CONFLICT)
+                    else:
+                        return Response({'message': 'Show is already on Plex.', 'success': False}, status=status.HTTP_409_CONFLICT)
                 else:
                     return Response(status=status.HTTP_401_UNAUTHORIZED)
             except KeyError:
