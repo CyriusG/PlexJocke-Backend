@@ -1,6 +1,7 @@
 import json, pycurl
 from io import BytesIO
 from bs4 import BeautifulSoup
+from urllib import parse
 from fuzzywuzzy import fuzz
 
 class Plex():
@@ -41,7 +42,7 @@ class Plex():
             return 'JSON API failure'
 
     def search_for_movie(self, title, date):
-        request = self.__apicall(self.__host, self.__port, '/search?query=' + title.replace(' ', '%20'))
+        request = self.__apicall(self.__host, self.__port, '/search?query=' + parse.quote_plus(title))
 
         body = BeautifulSoup(request, 'html.parser')
         match = False
@@ -58,7 +59,7 @@ class Plex():
         return match
 
     def search_for_show(self, title, date):
-        request = self.__apicall(self.__host, self.__port, '/search?query=' + title.replace(' ', '%20'))
+        request = self.__apicall(self.__host, self.__port, '/search?query=' + parse.quote_plus(title))
 
         body = BeautifulSoup(request, 'html.parser')
         match = False
