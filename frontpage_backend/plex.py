@@ -1,6 +1,7 @@
 import json, pycurl
 from io import BytesIO
 from bs4 import BeautifulSoup
+from fuzzywuzzy import fuzz
 
 class Plex():
 
@@ -48,7 +49,10 @@ class Plex():
         year = date.split('-')[0]
 
         for video in body.mediacontainer.findAll('video'):
-            if video['title'] == title and video['year'] == year and video['type'] == 'movie':
+
+            titleRatio = fuzz.ratio(video['title'], title)
+
+            if titleRatio > 75 and video['year'] == year and video['type'] == 'movie':
                 match = True
 
         return match
@@ -62,7 +66,10 @@ class Plex():
         year = date.split('-')[0]
 
         for video in body.mediacontainer.findAll('directory'):
-            if video['title'] == title and video['year'] == year and video['type'] == 'show':
+
+            titleRatio = fuzz.ratio(video['title'], title)
+
+            if titleRatio > 75 and video['year'] == year and video['type'] == 'show':
                 match = True
 
         return match

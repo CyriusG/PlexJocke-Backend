@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # Third party
     'corsheaders',
     'rest_framework',
+    'django_cron',
 ]
 
 MIDDLEWARE = [
@@ -145,8 +146,19 @@ STATICFILES_DIRS = (
 
 # Authentication
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_DOMAIN = "localhost"
+SESSION_COOKIE_DOMAIN = 'localhost'
 SESSION_COOKIE_HTTPONLY = False
+
+# Notification
+MAILGUN_ENDPOINT = ''
+MAILGUN_API_KEY = ''
+NOTIFICATION_SENDER = ''
+
+# CronJob
+CRON_INTERVAL = 5
+CRON_CLASSES = [
+    'movie.MovieAvailability',
+]
 
 # Plex settings
 PLEX_OWNER = ''
