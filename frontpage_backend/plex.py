@@ -52,7 +52,7 @@ class Plex():
 
             titleRatio = fuzz.ratio(video['title'], title)
 
-            if titleRatio > 75 and video['year'] == year and video['type'] == 'movie':
+            if titleRatio > 80 and video['type'] == 'movie':
                 match = True
 
         return match
@@ -69,7 +69,7 @@ class Plex():
 
             titleRatio = fuzz.ratio(video['title'], title)
 
-            if titleRatio > 75 and video['year'] == year and video['type'] == 'show':
+            if titleRatio > 80 and video['type'] == 'show':
                 match = True
 
         return match
