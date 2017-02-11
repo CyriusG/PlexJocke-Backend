@@ -32,7 +32,7 @@ class ShowCreateAPIView(APIView):
 
         try:
             # Get the session of the current user.
-            session = SessionStore(session_key=request.data['sessionid'])
+            session = SessionStore(session_key=request.COOKIES['sessionid'])
 
             try:
                 token = session['plexjocke_token']
@@ -43,7 +43,6 @@ class ShowCreateAPIView(APIView):
                             session = SessionStore(session_key=request.data['sessionid'])
 
                             data = request.data
-                            del data['sessionid']
 
                             serializer = ShowCreateSerializer(data=request.data)
 
@@ -75,7 +74,7 @@ class ShowDeleteAPIView(APIView):
 
         try:
             # Get the session of the current user.
-            session = SessionStore(session_key=request.data['sessionid'])
+            session = SessionStore(session_key=request.COOKIES['sessionid'])
 
             try:
                 token = session['plexjocke_token']

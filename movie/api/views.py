@@ -30,7 +30,7 @@ class MovieCreateAPIView(APIView):
 
         try:
             # Get the session of the current user.
-            session = SessionStore(session_key=request.data['sessionid'])
+            session = SessionStore(session_key=request.COOKIES['sessionid'])
 
             try:
                 token = session['plexjocke_username']
@@ -42,7 +42,6 @@ class MovieCreateAPIView(APIView):
 
                             # Remove the sessionid from the post data.
                             data = request.data
-                            del data['sessionid']
 
                             # Create a new MovieCreateSerializer using the data that was posted.
                             serializer = MovieCreateSerializer(data=data)
@@ -63,7 +62,7 @@ class MovieCreateAPIView(APIView):
             except KeyError:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        except MultiValueDictKeyError:
+        except KeyError:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -77,7 +76,7 @@ class MovieDeleteAPIView(APIView):
 
         try:
             # Get the session of the current user.
-            session = SessionStore(session_key=request.data['sessionid'])
+            session = SessionStore(session_key=request.COOKIES['sessionid'])
 
             try:
                 token = session['plexjocke_token']
@@ -101,7 +100,7 @@ class MovieDeleteAPIView(APIView):
                     return Response(status=status.HTTP_401_UNAUTHORIZED)
             except KeyError:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
-        except MultiValueDictKeyError:
+        except KeyError:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
