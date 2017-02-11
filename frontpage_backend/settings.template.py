@@ -147,7 +147,7 @@ STATICFILES_DIRS = (
 # Authentication
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_DOMAIN = 'localhost'
-SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
 
 # Notification
 MAILGUN_ENDPOINT = ''
@@ -184,3 +184,5 @@ CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'localhost'
 )
+# Without this setting the frontend can't send cookies to the backend.
+CORS_ALLOW_CREDENTIALS = True
