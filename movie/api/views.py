@@ -109,11 +109,6 @@ class MovieDetailAPIView(RetrieveAPIView):
     serializer_class = MovieListSerializer
 
 
-class MovieListAPIView(APIView):
-    def get(self, request, format=None):
-        serializer = MovieListSerializer(data=Request.objects.all())
-
-
-        serializer.is_valid()
-
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+class MovieListAPIView(ListAPIView):
+    queryset = Request.objects.all()
+    serializer_class = MovieListSerializer
