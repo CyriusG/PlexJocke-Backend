@@ -11,8 +11,8 @@ class Request(models.Model):
     poster = models.CharField(max_length=500)
     user = models.CharField(max_length=500)
     user_email = models.EmailField()
-    created = models.DateTimeField(auto_now_add=True, auto_now=False)
-    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    created = models.DateField(auto_now_add=True, auto_now=False)
+    updated = models.DateField(auto_now_add=False, auto_now=True)
     available = models.BooleanField(default=False)
 
     def __str__(self):
