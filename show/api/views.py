@@ -5,10 +5,6 @@ from django.conf import settings
 from django.contrib.sessions.backends.db import SessionStore
 from django.utils.datastructures import MultiValueDictKeyError
 
-from rest_framework.generics import (
-    ListAPIView,
-    RetrieveAPIView,
-    )
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -99,11 +95,41 @@ class ShowDeleteAPIView(APIView):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
-class ShowDetailAPIView(RetrieveAPIView):
-    queryset = Request.objects.all()
-    serializer_class = ShowListSerializer
+class ShowDetailAPIView(APIView):
+    def get(self, request, pk, format=None):
+        serializer = ShowListSerializer(Request.objects.get(pk=pk))
+
+        return Response(serializer.data)
 
 
-class ShowListAPIView(ListAPIView):
-    queryset = Request.objects.all()
-    serializer_class = ShowListSerializer
+class ShowListAPIView(APIView):
+    def get(self, request, format=None):
+        try:
+            # Get the session of the current user.
+            session = SessionStore(session_key=request.COOKIES['sessionid'])
+
+            # Try and get the session token, return 401 unauthorized if unable to.
+            try:
+                token = session['plexjocke_token']
+
+                if token:
+                    # See if the user only wants to see their requests
+                    try:
+                        useronly = request.GET['useronly']
+
+                        if useronly == 'y':
+                             requests = Request.objects.all().filter(user=session['plexjocke_username'])
+                        else:
+                            requests = Request.objects.all()
+                    except KeyError:
+                        pass
+
+                    serializer = ShowListSerializer(requests, many=True)
+
+                    return Response(serializer.data)
+                else:
+                    return Response(status=status.HTTP_401_UNAUTHORIZED)
+            except KeyError:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+        except KeyError:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
