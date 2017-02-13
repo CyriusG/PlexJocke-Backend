@@ -127,7 +127,7 @@ class MovieListAPIView(APIView):
                         else:
                             requests = Request.objects.all()
                     except KeyError:
-                        pass
+                        requests = Request.objects.all()
 
                     serializer = MovieListSerializer(requests, many=True)
 
