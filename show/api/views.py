@@ -122,7 +122,7 @@ class ShowListAPIView(APIView):
                         else:
                             requests = Request.objects.all()
                     except KeyError:
-                        pass
+                        requests = Request.objects.all()
 
                     serializer = ShowListSerializer(requests, many=True)
 
