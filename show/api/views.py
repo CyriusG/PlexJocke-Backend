@@ -118,11 +118,11 @@ class ShowListAPIView(APIView):
                         useronly = request.GET['useronly']
 
                         if useronly == 'y':
-                             requests = Request.objects.all().filter(user=session['plexjocke_username']).reverse()
+                             requests = Request.objects.all().filter(user=session['plexjocke_username']).order_by(-created)
                         else:
-                            requests = Request.objects.all().reverse()
+                            requests = Request.objects.all().order_by(-created)
                     except KeyError:
-                        requests = Request.objects.all().reverse()
+                        requests = Request.objects.all().order_by(-created)
 
                     serializer = ShowListSerializer(requests, many=True)
 
