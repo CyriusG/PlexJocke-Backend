@@ -123,11 +123,11 @@ class MovieListAPIView(APIView):
                         useronly = request.GET['useronly']
 
                         if useronly == 'y':
-                             requests = Request.objects.all().filter(user=session['plexjocke_username']).order_by(-created)
+                             requests = Request.objects.all().filter(user=session['plexjocke_username']).order_by('-id')
                         else:
-                            requests = Request.objects.all().order_by(-created)
+                            requests = Request.objects.all().order_by('-id')
                     except KeyError:
-                        requests = Request.objects.all().order_by(-created)
+                        requests = Request.objects.all().order_by('-id')
 
                     serializer = MovieListSerializer(requests, many=True)
 
