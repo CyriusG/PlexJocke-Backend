@@ -90,10 +90,12 @@ class Sonarr():
                 return False
 
         except json.JSONDecodeError:
+            self.reply = {
+                'message': 'Failed communicating with Sonarr.'
+            }
             return False
 
     def search_for_seasons(self, sonarr_id, seasons):
-
         for season in seasons.split(','):
             if season == '-1':
                 data = {
