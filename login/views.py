@@ -52,7 +52,7 @@ def login(request):
             information = getInformation(username, password)
 
             # If there's a valid token and the user is on the friends list try to authenticate the user.
-            if information[0] and check_friend(username):
+            if information != None and check_friend(username):
                 try:
                     # If the user checked the remember me checkbox the session shouldn't expire when the browser closes.
                     remember_me = request.POST['rememberMe']

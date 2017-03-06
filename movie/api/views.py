@@ -54,12 +54,12 @@ class MovieCreateAPIView(APIView):
                     else:
                         return Response({'message': 'Movie is already on Plex.', 'success': False}, status=status.HTTP_409_CONFLICT)
                 else:
-                    return Response(status=status.HTTP_401_UNAUTHORIZED)
+                    return Response({'message': 'You are not authorized to perform this action.', 'success': False}, status=status.HTTP_401_UNAUTHORIZED)
             except KeyError:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'message': 'You are not authorized to perform this action.', 'success': False}, status=status.HTTP_401_UNAUTHORIZED)
 
         except KeyError:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': 'You are not authorized to perform this action.', 'success': False}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 
@@ -91,13 +91,13 @@ class MovieDeleteAPIView(APIView):
                         else:
                             return Response(couchpotato.reply, status=status.HTTP_400_BAD_REQUEST)
                     except Request.DoesNotExist:
-                        return Response(status=status.HTTP_404_NOT_FOUND)
+                        return Response({'message': 'The request you tried to remove does not exist.', 'success': False}, status=status.HTTP_404_NOT_FOUND)
                 else:
-                    return Response(status=status.HTTP_401_UNAUTHORIZED)
+                    return Response({'message': 'You are not authorized to perform this action.', 'success': False}, status=status.HTTP_401_UNAUTHORIZED)
             except KeyError:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'message': 'You are not authorized to perform this action.', 'success': False}, status=status.HTTP_401_UNAUTHORIZED)
         except KeyError:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': 'You are not authorized to perform this action.', 'success': False}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class MovieDetailAPIView(APIView):

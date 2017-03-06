@@ -1,4 +1,4 @@
-import json, pycurl
+import json, pycurl, re
 from io import BytesIO
 from bs4 import BeautifulSoup
 from urllib import parse
@@ -49,12 +49,17 @@ class Plex():
 
         year = date.split('-')[0]
 
+        pattern = re.compile('\((\d\d\d\d)\)')
+
         for video in body.mediacontainer.findAll('video'):
+            if pattern.match(video['title']) or pattern.match(title):
+                titleRatio = fuzz.ratio(video['title'], title)
 
-            titleRatio = fuzz.ratio(video['title'], title)
-
-            if titleRatio > 80 and video['type'] == 'movie':
-                match = True
+                if titleRatio > 80 and video['type'] == 'movie':
+                    match = True
+            else:
+                if title == video['title']:
+                    match = True
 
         return match
 
@@ -66,11 +71,16 @@ class Plex():
 
         year = date.split('-')[0]
 
+        pattern = re.compile('\((\d\d\d\d)\)')
+
         for video in body.mediacontainer.findAll('directory'):
+            if pattern.match(video['title']) or pattern.match(title):
+                titleRatio = fuzz.ratio(video['title'], title)
 
-            titleRatio = fuzz.ratio(video['title'], title)
-
-            if titleRatio > 80 and video['type'] == 'show':
-                match = True
+                if titleRatio > 80 and video['type'] == 'show':
+                    match = True
+            else:
+                if title == video['title']:
+                    match = True
 
         return match
