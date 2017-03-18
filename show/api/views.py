@@ -91,6 +91,14 @@ class ShowDeleteAPIView(APIView):
         except MultiValueDictKeyError:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+class ShowCheckSeasonsAvailability(APIView):
+    def get(self, request, pk, format=None):
+
+        sonarr = Sonarr(settings.SONARR_HOST, settings.SONARR_PORT, settings.SONARR_API_KEY)
+
+        show = sonarr.check_seasons_availability(pk)
+
+        return Response(show, status=status.HTTP_200_OK)
 
 class ShowDetailAPIView(APIView):
     def get(self, request, pk, format=None):

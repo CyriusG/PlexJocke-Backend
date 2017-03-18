@@ -1,8 +1,10 @@
 import json, pycurl, time
 from io import BytesIO
+
+from bs4 import BeautifulSoup
 from slugify import slugify
 
-
+# Class for interracting with Sonarr.
 class Sonarr():
 
     def __init__(self, host, port, api_key):
@@ -44,6 +46,8 @@ class Sonarr():
         except json.JSONDecodeError:
             return 'JSON API failure'
 
+    # title - Title of the show
+    # poster
     def addshow(self, title, poster, tvdb_id, path, quality):
         data = {
             "title": title,
@@ -110,6 +114,16 @@ class Sonarr():
                 }
 
             self.__apicall(self.__host, self.__port, 'post', self.__api_key, 'command', data)
+
+    def check_seasons_availability(self, sonarr_id):
+        show_json = json.loads(self.__apicall(self.__host, self.__port, 'get', self.__api_key, 'series/' + sonarr_id, {}))
+        available_seasons = []
+        for season in show_json['seasons']:
+            if season['statistics']['episodeCount'] != 0:
+                available_seasons.append(season['seasonNumber'])
+
+        return available_seasons
+
 
     def delete_show(self, sonarr_id):
 
