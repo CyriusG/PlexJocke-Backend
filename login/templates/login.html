@@ -1,0 +1,46 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
+    <title>Login Page</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" media="screen" title="no title">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" media="screen" title="no title">
+  </head>
+  <body>
+    <div class="container">
+
+      <h1>Plex<span>Jocke</span></h1>
+
+      <form class="form-signin" method="post">
+        {% csrf_token %}
+        <h2 class="form-signin-heading">Sign in </h2>
+        {% if loginError %}
+        <div class="alert alert-danger" role="alert">
+          <span class="sr-only">Error:</span>
+          Invalid credentials.
+        </div>
+        {% endif %}
+        <label for="inputEmail">Username or Email</label>
+        <input type="text" id="inputText" class="form-control" name="username" required autofocus>
+        <label for="inputPassword" >Password</label>
+        <input type="password" id="inputPassword" class="form-control" name="password" required>
+
+        <div class="checkbox pull-left">
+          <label>
+            <input type="checkbox" value="remember-me" name="rememberMe"> Remember me
+          </label>
+        </div>
+
+        <button class="btn-signin pull-right" type="submit">SIGN IN</button>
+      </form>
+    </div> <!-- /container -->
+  </body>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}" charset="utf-8"></script>
+</html>
