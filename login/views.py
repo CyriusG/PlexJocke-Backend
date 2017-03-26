@@ -83,7 +83,7 @@ def login(request):
         }
 
         # Render the page
-        return render(request, 'login/login.html', context)
+        return render(request, 'login.html', context)
 
 
 # View for signing out
